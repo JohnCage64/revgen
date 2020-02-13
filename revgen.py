@@ -140,7 +140,9 @@ def rev(ip,port,w):
                 for i in v:
                     print(i)
 
-##chek if port number is valid
+############
+# PORT
+############
 def chk_port(port=""):
     chk=False
     while chk is False:
@@ -159,8 +161,9 @@ def chk_port(port=""):
         return port
     chk=True
     return port
-
-#check if ip is valid
+############
+#  IP
+#############
 def chk_ip(ip=""):
     chk=False
     while chk is False:
@@ -175,22 +178,31 @@ def chk_ip(ip=""):
         return ip
     chk=True
     return ip
-
+###########
+##  TYPE
+##########
 def chk_type(type=""):
     chk=False
     while chk is False:
         try:
             if (type == "") or (type==None) or (len(type) == 0):
-                print(f"Choose wisely: {reverse}")
-                type = input("TYPE: ")
+                print(f"Choose wisely:s",end = '') 
+                for type in reverse:
+                    print (f'{type}, ',end = '')
+                type = input("\nTYPE: ")
             assert type in reverse
         except ValueError:
-            print(f"Choose wisely: {reverse}")
-            type= input("TYPE: ")
+            print(f"Choose wisely: ",end = '')
+            for type in reverse:
+                    print (f'{type}, ',end = '')
+            type= input("\nTYPE: ")
             chk_type(type)
         except AssertionError:
-            print(f"Choose wisely: {reverse}")
-            type= input("TYPE: ")
+            print(f"Choose wisely: ",end = '')
+            for type in reverse:
+                    print (f'{type}, ',end = '')
+                
+            type= input("\nTYPE: ")
             chk_type(type)
         return type
     chk=True
@@ -232,7 +244,7 @@ if __name__ == "__main__":
     # 'interactive'
     ########3
     if not args.w and not args.ip and not args.i and not args.p:
-        print("---")
+        #print("---")
         ip=chk_ip()
         port=chk_port()
         w=chk_type()
@@ -247,7 +259,7 @@ if __name__ == "__main__":
     
     if args.i and not args.p and not args.w and not args.ip and (args.w not in reverse):
         if args.i:
-            print("-i")
+            #print("-i")
             ip = get_local(args.i)
             port = chk_port()
             w = chk_type(args.w)
@@ -271,7 +283,7 @@ if __name__ == "__main__":
     # -w TYPE only
     #######
     if args.w and not args.ip and not args.i:
-        print("- w")
+        #print("- w")
         ip = chk_ip()
         w = chk_type(args.w)
         port = chk_port()
@@ -284,7 +296,7 @@ if __name__ == "__main__":
     
     if args.i and args.p and not args.w and not args.ip and (args.w not in reverse):
         if args.i:
-            print("-i -p")
+            #print("-i -p")
             try:
                 ip = get_local(args.i)       
             except KeyError:
@@ -298,7 +310,7 @@ if __name__ == "__main__":
 # -w TYPE -i IFCE
 ######
     if args.w and not args.ip and args.i and not args.p:
-        print("-w -i")
+        #print("-w -i")
         switch=args.i
         try:
             ip = get_local(switch)       
@@ -313,7 +325,7 @@ if __name__ == "__main__":
 # -w TYPE -i IFCE -p PORT
 ######
     if args.w and not args.ip and args.i and args.p:
-        print("-w -i -p")
+        #print("-w -i -p")
         switch=args.i
         try:
             ip = get_local(switch)       
@@ -326,7 +338,7 @@ if __name__ == "__main__":
     
     ## -ip IP:PORT
     if args.ip and not args.w and not args.i:
-        print("-ip:port")
+        #print("-ip:port")
         if ipa == False :
             ip = chk_ip(ip)
         port = chk_port(port)
@@ -335,7 +347,7 @@ if __name__ == "__main__":
 
     ## -w TYPE IP:PORT
     if args.ip and args.w and not args.i and not args.p:
-        print("-w -ip:port")
+        #print("-w -ip:port")
         w = chk_type(args.w)
         if ipa == False:
             ip = chk_ip(ip)
