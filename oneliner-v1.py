@@ -114,7 +114,7 @@ if __name__ == "__main__":
     if (args.ip) and (args.w == None):
         if ipa == False :
             ip = chk_ip(ip)
-        port = chk_port()
+        port = chk_port(port)
         rev(ip,port)
 
     ## -w TYPE IP:PORT
