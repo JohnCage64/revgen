@@ -1,6 +1,10 @@
 #!/usr/bin/python3
 import ipaddress
 import argparse
+import socket
+import array
+import struct
+import fcntl
 
 ###VARIABLES AND STUFF
 reverse = ('all','bash','python','mk','java','perl','echo','php','ruby','nc','mknod','lua','xterm','socat','awk','nodejs','psh','tclsh','telnet')
@@ -87,6 +91,41 @@ def onel(ip,port,long):
 
 ##########################
 ##########################
+
+def get_local_interfaces():
+    MAX_BYTES = 4096
+    FILL_CHAR = b'\0'
+    SIOCGIFCONF = 0x8912
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    names = array.array('B', MAX_BYTES * FILL_CHAR)
+    names_address, names_length = names.buffer_info()
+    mutable_byte_buffer = struct.pack('iL', MAX_BYTES, names_address)
+    mutated_byte_buffer = fcntl.ioctl(sock.fileno(), SIOCGIFCONF, mutable_byte_buffer)
+    max_bytes_out, names_address_out = struct.unpack('iL', mutated_byte_buffer)
+    namestr = names.tobytes()
+    namestr[:max_bytes_out]
+    bytes_out = namestr[:max_bytes_out]
+
+    ip_dict = {}
+    for i in range(0, max_bytes_out, 40):
+        name = namestr[ i: i+16 ].split(FILL_CHAR, 1)[0]
+        name = name.decode('utf-8')
+        ip_bytes   = namestr[i+20:i+24]
+        full_addr = []
+        for netaddr in ip_bytes:
+            if isinstance(netaddr, int):
+                full_addr.append(str(netaddr))
+            elif isinstance(netaddr, str):
+                full_addr.append(str(ord(netaddr)))
+        ip_dict[name] = '.'.join(full_addr)
+
+    return ip_dict
+def get_local(switch):
+    local = get_local_interfaces()
+    return local[switch]
+
+##########################
+##########################
 def rev(ip,port,w):
 
     long = int(ipaddress.IPv4Address(ip))
@@ -141,7 +180,7 @@ def chk_type(type=""):
     chk=False
     while chk is False:
         try:
-            if (ip == "") or (ip==None) or (len(ip) == 0):
+            if (type == "") or (type==None) or (len(type) == 0):
                 print(f"Choose wisely: {reverse}")
                 type = input("TYPE: ")
             assert type in reverse
@@ -157,49 +196,89 @@ def chk_type(type=""):
     chk=True
     return type
 
+ 
+
 
 #starter
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='revgen',description='You gimme an IP with PORT numba and You get oneliner.', epilog='Have fun!')
+    parser.add_argument("-i",type=str, help='revgen.py -i eth0')
     parser.add_argument("-w",type=str, help='revgen.py -w php -ip IP:PORT')
     parser.add_argument("-ip", type=str, help='revgen.py -ip IP:PORT')
     args = parser.parse_args()
-    ip = args.ip
     ipa = False
     ##catch wrong input
-    try:
-        ip,port = ip.split(":")
-    except ValueError:
-        ip = chk_ip(ip)
-        ipa = True
-        port=""
-    except AttributeError:
-        ip = chk_ip(ip)
-        port = chk_port()
-        if (args.w == None) or args.w=="":
-            w = args.w
-            w=chk_type(w)
-       # else:
-      #     w="all"
-            rev(ip,port,w)
-    
-    
-    ## -w TYPE only
-    if args.w and (args.ip == None) or (args.ip==""):
-        w = chk_type(args.w)
-        #w = args.w
-        print(w)
-        #if ipa == False :
-        #    ip = chk_ip(ip)
-        #    rev(ip,port,w)
-
-        port = chk_port(port)
-        rev(ip,port,w)
+    if args.ip:
+        ip = args.ip
+        try:
+            ip,port = ip.split(":")
+        except ValueError:
+            ip = chk_ip(ip)
+            ipa = True
+            port=""
+        except AttributeError:
+            ip = chk_ip(ip)
+            ipa = True
+            port = chk_port()
+            if not args.w:
+                w = args.w
+                w=chk_type(w)
+                rev(ip,port,w)
  
+
+
+    #######
+    # 'interactive'
+    ########3
+    if not args.w and not args.ip and not args.i:
+        ip=chk_ip()
+        port=chk_port()
+        w=chk_type()
+        rev(ip,port,w)
+
+     
+  
+      
+    #######
+    #  -i IFCE only
+    #######
+    
+    if args.i and not args.w and not args.ip and (args.w not in reverse):
+        if args.i:
+            #print("-i")
+            ip = get_local(args.i)
+            port = chk_port()
+            w = chk_type(args.w)
+            rev(ip,port,w)
+ 
+ 
+
+    #######
+    # -w TYPE only
+    #######
+    if args.w and not args.ip and not args.i:
+        #print("- w")
+        ip = chk_ip()
+        w = chk_type(args.w)
+        port = chk_port()
+        rev(ip,port,w)
+
+#######
+# -w TYPE -i IFCE
+######
+    if args.w and not args.ip and args.i:
+        #print("-w -i")
+        switch=args.i
+        ip = get_local(switch)       
+        w = chk_type(args.w)
+        port = chk_port()
+        rev(ip,port,w)
+
 
     
     ## -ip IP:PORT
-    if (args.ip) and (args.w == None):
+    if args.ip and not args.w and not args.i:
+        #print("-ip:port")
         if ipa == False :
             ip = chk_ip(ip)
         port = chk_port(port)
@@ -207,9 +286,10 @@ if __name__ == "__main__":
         rev(ip,port,w)
 
     ## -w TYPE IP:PORT
-    if args.ip and args.w:
+    if args.ip and args.w and not args.i:
+        #print("-w -ip:port")
         w = chk_type(args.w)
-        if ipa == False :
+        if ipa == False:
             ip = chk_ip(ip)
         port = chk_port(port)
         rev(ip,port,w)
