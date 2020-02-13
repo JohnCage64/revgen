@@ -4,7 +4,6 @@ import argparse
 import sys
 ###VARIABLES AND STUFF
 reverse = ('all','bash','python','mk','java','perl','echo')
-   
 ##########################
 ##########################
 ol = {}
@@ -19,11 +18,8 @@ def onel(ip,port,long):
 
 ##########################
 ##########################
- 
 def rev(ip,port,w='all'):
-###
-###
-###longa!!!
+
     long = int(ipaddress.IPv4Address(ip))
     onel(ip,port,long)
     if (w == 'all'):
@@ -52,8 +48,8 @@ def chk_port(port=""):
             print('It\'s not a valid port number, sorry! try again')
         return port
     chk=True
-    return port     
-       
+    return port
+
 #check if ip is valid
 def chk_ip(ip=""):
     chk=False
@@ -66,11 +62,10 @@ def chk_ip(ip=""):
             print("Hey!thats's not how IP addres looks like. Try harder")
             ip = input("IP: ")
             ip = chk_ip(ip)
-        return ip 
+        return ip
     chk=True
-    return ip               
-                  
-    
+    return ip
+
 def chk_type(type=""):
     chk=False
     while chk is False:
@@ -84,12 +79,12 @@ def chk_type(type=""):
             type= input("TYPE: ")
             chk_type(type)
         except AssertionError:
-            print(f"Choose wisely: {reverse}")    
+            print(f"Choose wisely: {reverse}")
             type= input("TYPE: ")
             chk_type(type)
         return type
     chk=True
-    return type    
+    return type
 
 
 #starter
@@ -100,8 +95,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     ip = args.ip
     ipa = False
-    ##catch wrong input 
-    try: 
+    ##catch wrong input
+    try:
         ip,port = ip.split(":")
     except ValueError:
         ip = chk_ip(ip)
@@ -116,17 +111,16 @@ if __name__ == "__main__":
         else:
             w="all"
         rev(ip,port,w)
-    ## -ip IP:PORT 
+    ## -ip IP:PORT
     if (args.ip) and (args.w == None):
         if ipa == False :
             ip = chk_ip(ip)
-        port = chk_port()       
+        port = chk_port()
         rev(ip,port)
-        
-    
+
     ## -w TYPE IP:PORT
     if args.ip and args.w:
-        w = chk_type(args.w)       
+        w = chk_type(args.w)
         if ipa == False :
             ip = chk_ip(ip)
         port = chk_port(port)
