@@ -203,6 +203,7 @@ def chk_type(type=""):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='revgen',description='You gimme an IP with PORT numba and You get oneliner.', epilog='Have fun!')
     parser.add_argument("-i",type=str, help='revgen.py -i eth0')
+    parser.add_argument("-p",type=str, help='revgen.py -p 1337')
     parser.add_argument("-w",type=str, help='revgen.py -w php -ip IP:PORT')
     parser.add_argument("-ip", type=str, help='revgen.py -ip IP:PORT')
     args = parser.parse_args()
@@ -224,13 +225,14 @@ if __name__ == "__main__":
                 w = args.w
                 w=chk_type(w)
                 rev(ip,port,w)
- 
-
+        except KeyError:
+            print('blad!')
 
     #######
     # 'interactive'
     ########3
-    if not args.w and not args.ip and not args.i:
+    if not args.w and not args.ip and not args.i and not args.p:
+        print("---")
         ip=chk_ip()
         port=chk_port()
         w=chk_type()
@@ -243,42 +245,88 @@ if __name__ == "__main__":
     #  -i IFCE only
     #######
     
-    if args.i and not args.w and not args.ip and (args.w not in reverse):
+    if args.i and not args.p and not args.w and not args.ip and (args.w not in reverse):
         if args.i:
-            #print("-i")
+            print("-i")
             ip = get_local(args.i)
             port = chk_port()
             w = chk_type(args.w)
             rev(ip,port,w)
  
+       
+    #######
+    #  -p PORT only
+    #######
+    
+    if args.p and not args.i and not args.w and not args.ip and (args.w not in reverse):
+        print("-p")
+        #ip = get_local(args.i)
+        port = args.p
+        w = chk_type(args.w)
+        ip = chk_ip()
+        rev(ip,port,w)
  
 
     #######
     # -w TYPE only
     #######
     if args.w and not args.ip and not args.i:
-        #print("- w")
+        print("- w")
         ip = chk_ip()
         w = chk_type(args.w)
         port = chk_port()
         rev(ip,port,w)
 
+
+#######
+#  -i IFCE -p PORT
+#######
+    
+    if args.i and args.p and not args.w and not args.ip and (args.w not in reverse):
+        if args.i:
+            print("-i -p")
+            try:
+                ip = get_local(args.i)       
+            except KeyError:
+                print('blad!')
+                ip=chk_ip()
+            port = chk_port(args.p)
+            w = chk_type(args.w)
+            rev(ip,port,w)
+
 #######
 # -w TYPE -i IFCE
 ######
-    if args.w and not args.ip and args.i:
-        #print("-w -i")
+    if args.w and not args.ip and args.i and not args.p:
+        print("-w -i")
         switch=args.i
-        ip = get_local(switch)       
+        try:
+            ip = get_local(switch)       
+        except KeyError:
+            print('blad!')
+            ip=chk_ip()
         w = chk_type(args.w)
         port = chk_port()
         rev(ip,port,w)
 
-
+#######
+# -w TYPE -i IFCE -p PORT
+######
+    if args.w and not args.ip and args.i and args.p:
+        print("-w -i -p")
+        switch=args.i
+        try:
+            ip = get_local(switch)       
+        except KeyError:
+            print('blad!')
+            ip=chk_ip()        
+        w = chk_type(args.w)
+        port = chk_port(args.p)
+        rev(ip,port,w)
     
     ## -ip IP:PORT
     if args.ip and not args.w and not args.i:
-        #print("-ip:port")
+        print("-ip:port")
         if ipa == False :
             ip = chk_ip(ip)
         port = chk_port(port)
@@ -286,8 +334,8 @@ if __name__ == "__main__":
         rev(ip,port,w)
 
     ## -w TYPE IP:PORT
-    if args.ip and args.w and not args.i:
-        #print("-w -ip:port")
+    if args.ip and args.w and not args.i and not args.p:
+        print("-w -ip:port")
         w = chk_type(args.w)
         if ipa == False:
             ip = chk_ip(ip)
