@@ -1,7 +1,6 @@
-import socket
 import ipaddress
 import argparse
-import sys
+
 ###VARIABLES AND STUFF
 reverse = ('all','bash','python','mk','java','perl','echo')
 ##########################
