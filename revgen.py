@@ -186,7 +186,7 @@ def chk_type(type=""):
     while chk is False:
         try:
             if (type == "") or (type==None) or (len(type) == 0):
-                print(f"Choose wisely:s",end = '') 
+                print(f"Choose wisely: ",end = '') 
                 for type in reverse:
                     print (f'{type}, ',end = '')
                 type = input("\nTYPE: ")
