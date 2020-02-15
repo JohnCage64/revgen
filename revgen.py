@@ -233,7 +233,7 @@ if __name__ == "__main__":
     # 'interactive' [OK]
     ########3
     if not args.w and not args.ip and not args.i and not args.p and not args.b:
-        print("---")
+        #print("---")
         ip=chk_ip()
         port=chk_port()
         w=chk_rvtype()
@@ -248,7 +248,7 @@ if __name__ == "__main__":
     
     if args.i and not args.p and not args.w and not args.ip and (args.w not in reverse)and not args.b:
         if args.i:
-            print("-i")
+            #print("-i")
             ip = get_local(args.i)
             port = chk_port()
             w = chk_rvtype(args.w)
@@ -260,7 +260,7 @@ if __name__ == "__main__":
     #######
     
     if args.p and not args.i and not args.w and not args.ip and (args.w not in reverse) and not args.b:
-        print("-p")
+        #print("-p")
         port = args.p
         ip = chk_ip()
         w = chk_rvtype()
@@ -271,7 +271,7 @@ if __name__ == "__main__":
     # -w rvtype -p [OK]
     #######
     if args.w and args.p and not args.ip and not args.i and not args.b:
-        print("-w -p")
+        #print("-w -p")
         ip = chk_ip()
         w = chk_rvtype(args.w)
         port = chk_port(args.p)
@@ -282,7 +282,7 @@ if __name__ == "__main__":
     # -w rvtype only [OK]
     #######
     if args.w and not args.ip and not args.i and not args.p and not args.b:
-        print("- w")
+        #print("- w")
         ip = chk_ip()
         w = chk_rvtype(args.w)
         port = chk_port()
@@ -295,7 +295,7 @@ if __name__ == "__main__":
     
     if args.i and args.p and not args.w and not args.ip and (args.w not in reverse) and not args.b:
         if args.i:
-            print("-i -p")
+            #print("-i -p")
             try:
                 ip = get_local(args.i)       
             except KeyError:
@@ -309,7 +309,7 @@ if __name__ == "__main__":
 # -w rvtype -i IFCE  [OK]
 ######
     if args.w and not args.ip and args.i and not args.p and not args.b:
-        print("-w -i")
+       # print("-w -i")
         switch=args.i
         try:
             ip = get_local(switch)       
@@ -324,7 +324,7 @@ if __name__ == "__main__":
 # -w rvtype -i IFCE -p PORT  [OK]
 ######
     if args.w and not args.ip and args.i and args.p and not args.b:
-        print("-w -i -p")
+        #print("-w -i -p")
         switch=args.i
         try:
             ip = get_local(switch)       
@@ -339,7 +339,7 @@ if __name__ == "__main__":
 # -w rvtype -i IFCE -p PORT -b  | bse64!
 ######
     if args.w and not args.ip and args.i and args.p and  args.b:
-        print("-w -i -p -b")
+        #print("-w -i -p -b")
         switch=args.i
         try:
             ip = get_local(switch)       
@@ -349,23 +349,10 @@ if __name__ == "__main__":
         w = chk_rvtype(args.w)
         port = chk_port(args.p)
         revb(ip,port,w)
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        
     ## -ip IP:PORT  [OK]
     if args.ip and not args.w and not args.i and not args.b:
-        print("-ip:port")
+        #print("-ip:port")
         ip, port = args.ip.split(':')
         ip = chk_ip(ip)
         port = chk_port(port)
@@ -374,15 +361,14 @@ if __name__ == "__main__":
 
     ## -w rvtype IP:PORT  [OK]   bledny eth0 dac do wyboru interfejsc.
     if args.ip and args.w and not args.i and not args.p and not args.b:
-        print("-w -ip:port")
+        #print("-w -ip:port")
         w = chk_rvtype(args.w)
         ip, port = args.ip.split(':')
         ip = chk_ip(ip)
         port = chk_port(port)
         rev(ip,port,w)
     
-    if args.b and not args.ip and args.w and not args.i and not args.p:
-        print('base64')
+    
      
         
 # - add -b64  for output in base64 
