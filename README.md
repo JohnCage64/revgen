@@ -31,8 +31,3 @@ and so on..
 TYPE:
 'all','bash','python','mk','java','perl','echo','php','ruby','nc','mknod','lua','xterm','socat','awk','nodejs','psh','tclsh','telnet'
 ---
-![Image of revgen](https://i.ibb.co/wJtHFLN/ravgen-help.png)
-
-![Image of revgen](https://i.ibb.co/XDkP97t/revgen.png)
-
-![Image of revgen](https://i.ibb.co/Dk2Hjtv/revgen2.png)
