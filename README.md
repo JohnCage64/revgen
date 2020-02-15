@@ -6,10 +6,14 @@ very simple use and validation of IP, PORT and TYPE of reverse shell.
 Added -i switch for setup ip of local interface  
 Added -p switch for setting port number  
 Added -b switch for output in base64 (works only with -w,-i,-p together sequence doesent matter)
+Added -l switch for aut change IP to LongIP format  
+
 
 Now You can just type $./revgen.py -i tun0 -p 1337 -w bash !
 ---
-or ./revgen.py -i tun0 -p 1337 -w bash -b  / for base64 instant output
+ ./revgen.py -i tun0 -p 1337 -w bash -b  / for base64 instant output
+---
+ ./revgen.py -i tun0 -p 1337 -w bash [-b] -l  / auto change ip to longIP format
 ---
 
 example usage:  
